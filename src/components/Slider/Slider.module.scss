@@ -1,0 +1,19 @@
+@import '../Slider/common/commonStyles';
+
+.contentContainer {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  border: 10px solid $accentBorderColor;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: sans-serif;
+  color: $dateTextColor;
+
+  & > * {
+    margin: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding: 0;
+  }
+}
