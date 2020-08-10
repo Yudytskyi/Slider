@@ -1,0 +1,27 @@
+.imageWrapper {
+  width: 900px;
+  height: 600px;
+  border: 1px solid black;
+  background-color: black;
+}
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.figcaption {
+  width: 100%;
+  height: 8rem;
+  &__title {
+    text-align: center;
+  }
+  &__description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-height: 1.88em;
+    overflow: hidden;
+    text-indent: 40px;
+    text-align: justify;
+  }
+}
