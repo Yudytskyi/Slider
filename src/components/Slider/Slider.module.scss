@@ -1,7 +1,9 @@
 @import '../Slider/common/commonStyles';
 
 .contentContainer {
-  @include flexCenter();
-  padding: 20px 10px;
+  margin: 0;
+  background-color: $darkGrey;
+  color: $white;
+  text-shadow: 1px 1px 1px $black;
   font-family: Arial, Helvetica, sans-serif;
 }

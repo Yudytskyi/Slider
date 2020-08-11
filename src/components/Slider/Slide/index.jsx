@@ -8,21 +8,21 @@ function Slide(props) {
   const {
     slide: { src, title, description },
     bgColor,
+    bgSize,
   } = props;
 
   const bgStyles = {
     background: `${bgColor} center no-repeat url(${src})`,
-    backgroundSize: 'contain',
-    bgColor: bgColor,
+    backgroundSize: bgSize,
   };
 
   return (
     <figure className={styles.imageWrapper}>
       <div className={styles.image} style={bgStyles}></div>
-      <figcaption className={styles.figcaption}>
+      <div className={styles.figcaption}>
         <h3 className={styles.figcaption__title}>{title}</h3>
         <p className={styles.figcaption__description}>{description}</p>
-      </figcaption>
+      </div>
     </figure>
   );
 }
@@ -38,6 +38,7 @@ Slide.defaultProps = {
   src: dummy,
   title: 'Slide',
   bgColor: 'black',
+  bgSize: 'cover',
 };
 
 export default Slide;
