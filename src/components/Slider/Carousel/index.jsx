@@ -12,13 +12,43 @@ class Carousel extends Component {
     this.sliderStyles = props.sliderStyles;
     this.state = {
       isPlaying: false,
-      speedPlaying: 5,
+      speedPlaying: 8,
+      maxSpeed: 10,
       isFullScreen: false,
       currentSlideNumber: 0,
       time: new Date(),
     };
     this.isFullScreen = false;
+    this.timeoutId = null;
   }
+  tick = () => {
+    this.setState(state => {
+      const { time } = state;
+      const newDate = new Date(time.getTime());
+      newDate.setSeconds(newDate.getSeconds() + 1);
+      this.clickHandleNext();
+      return {
+        time: newDate,
+      };
+    });
+  };
+  clear = () => {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+  };
+  componentDidMount() {
+    this.clickHandlePlay();
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { isPlaying, speedPlaying, maxSpeed } = this.state;
+    this.clear();
+    if (isPlaying) {
+      this.timeoutId = setTimeout(this.tick, (maxSpeed - speedPlaying) * 1000);
+    }
+  }
+
   dblClickHandlerFullscreen = () => {
     this.setState({ isFullScreen: !this.state.isFullScreen });
     console.log(this.state.isFullScreen);
@@ -63,10 +93,9 @@ class Carousel extends Component {
             type="range"
             id="speed"
             name="speed"
-            min="0"
-            max="10"
+            min="1"
+            max={this.state.maxSpeed - 1}
             value={this.state.speedPlaying}
-            step="1"
             onChange={this.moveHandleRange}
           />
           <button className={styles.button} onClick={this.dblClickHandlerFullscreen}>
