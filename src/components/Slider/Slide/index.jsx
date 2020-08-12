@@ -7,12 +7,13 @@ import dummy from './img/dummy.jpg';
 function Slide(props) {
   const {
     slide: { src, title, description },
-    bgColor,
     bgSize,
   } = props;
 
   const bgStyles = {
-    background: `${bgColor} center no-repeat url(${src})`,
+    backgroundPosition: 'center',
+    backgroundImage: `url(${src})`,
+    backgroundRepeat: 'no-repeat',
     backgroundSize: bgSize,
   };
 
@@ -31,13 +32,11 @@ Slide.propTypes = {
   src: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
-  bgColor: PropTypes.string.isRequired,
 };
 
 Slide.defaultProps = {
   src: dummy,
   title: 'Slide',
-  bgColor: 'black',
   bgSize: 'cover',
 };
 

@@ -1,0 +1,22 @@
+@import '../../Slider/common/commonStyles';
+
+.carousel {
+  position: relative;
+  // width: inherit;
+  // height: inherit;
+}
+.buttonsBlock {
+  position: absolute;
+  margin: auto;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  bottom: 160px;
+}
+.button {
+  border-radius: 10px;
+  opacity: 0.3;
+  &:hover {
+    opacity: 1;
+  }
+}
