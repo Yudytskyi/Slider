@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Icon from '@mdi/react';
+import { mdiPlay, mdiStop, mdiSkipNext, mdiSkipPrevious, mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 
 import styles from './Carousel.module.scss';
 
@@ -12,7 +14,7 @@ class Carousel extends Component {
     this.sliderStyles = props.sliderStyles;
     this.state = {
       isPlaying: false,
-      speedPlaying: 8,
+      speedPlaying: 6,
       maxSpeed: 10,
       isFullScreen: false,
       currentSlideNumber: 0,
@@ -51,7 +53,6 @@ class Carousel extends Component {
 
   dblClickHandlerFullscreen = () => {
     this.setState({ isFullScreen: !this.state.isFullScreen });
-    console.log(this.state.isFullScreen);
   };
   clickHandlePrev = () =>
     this.setState({
@@ -82,28 +83,49 @@ class Carousel extends Component {
       <div className={styles.carousel} style={currentStyles} onDoubleClick={this.dblClickHandlerFullscreen}>
         <Slide slide={this.slides[this.state.currentSlideNumber]} bgSize={bgSize} />
         <div className={styles.buttonsBlock}>
-          <button className={styles.button} onClick={this.clickHandlePrev}>
-            prev
-          </button>
-          <button className={styles.button} onClick={this.clickHandlePlay}>
-            {this.state.isPlaying ? 'stop' : 'play'}
-          </button>
-          <input
+          <Icon
             className={styles.button}
-            type="range"
-            id="speed"
-            name="speed"
-            min="1"
-            max={this.state.maxSpeed - 1}
-            value={this.state.speedPlaying}
-            onChange={this.moveHandleRange}
+            onClick={this.clickHandlePrev}
+            path={mdiSkipPrevious}
+            size={2}
+            rotate
+            color="white"
           />
-          <button className={styles.button} onClick={this.dblClickHandlerFullscreen}>
-            {this.state.isFullScreen ? 'screen' : 'fullscreen'}
-          </button>
-          <button className={styles.button} onClick={this.clickHandleNext}>
-            nex
-          </button>
+          <div className={styles.playBlock}>
+            {this.state.isPlaying ? (
+              <Icon className={styles.button} onClick={this.clickHandlePlay} path={mdiPlay} size={2} color="white" />
+            ) : (
+              <Icon className={styles.button} onClick={this.clickHandleStop} path={mdiStop} size={2} color="white" />
+            )}
+            <input
+              className={styles.button}
+              type="range"
+              id="speed"
+              name="speed"
+              min="1"
+              max={this.state.maxSpeed - 1}
+              value={this.state.speedPlaying}
+              onChange={this.moveHandleRange}
+            />
+          </div>
+          {this.state.isFullScreen ? (
+            <Icon
+              className={styles.button}
+              onClick={this.dblClickHandlerFullscreen}
+              path={mdiFullscreenExit}
+              size={2}
+              color="white"
+            />
+          ) : (
+            <Icon
+              className={styles.button}
+              onClick={this.dblClickHandlerFullscreen}
+              path={mdiFullscreen}
+              size={2}
+              color="white"
+            />
+          )}
+          <Icon className={styles.button} onClick={this.clickHandleNext} path={mdiSkipNext} size={2} color="white" />
         </div>
       </div>
     );

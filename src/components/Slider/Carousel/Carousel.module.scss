@@ -2,8 +2,6 @@
 
 .carousel {
   position: relative;
-  // width: inherit;
-  // height: inherit;
 }
 .buttonsBlock {
   position: absolute;
@@ -11,7 +9,7 @@
   display: flex;
   width: 100%;
   justify-content: space-evenly;
-  bottom: 160px;
+  bottom: 140px;
 }
 .button {
   border-radius: 10px;
@@ -19,4 +17,7 @@
   &:hover {
     opacity: 1;
   }
+}
+.playBlock {
+  @include flexCenter();
 }
