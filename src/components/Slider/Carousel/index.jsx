@@ -1,20 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '@mdi/react';
-import { mdiPlay, mdiStop, mdiSkipNext, mdiSkipPrevious, mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
+import {
+  mdiPlay,
+  mdiStop,
+  mdiSkipNext,
+  mdiSkipPrevious,
+  mdiFullscreen,
+  mdiFullscreenExit,
+  mdiCogOutline,
+} from '@mdi/js';
 
 import styles from './Carousel.module.scss';
-
+import { moveOnDidMount, clickHandlerFullscreen } from './move';
 import Slide from '../Slide';
-
 class Carousel extends Component {
   constructor(props) {
     super(props);
-    this.slides = props.slides;
-    this.sliderStyles = props.sliderStyles;
+    const { slides, sliderStyles } = this.props;
+    this.slides = slides;
+    this.sliderStyles = sliderStyles;
+    this.currentX = sliderStyles.currentPosition.left;
+    this.currentY = sliderStyles.currentPosition.top;
+
     this.state = {
       isPlaying: false,
-      speedPlaying: 6,
+      speedPlaying: 5,
       maxSpeed: 10,
       isFullScreen: false,
       currentSlideNumber: 0,
@@ -22,6 +33,7 @@ class Carousel extends Component {
     };
     this.isFullScreen = false;
     this.timeoutId = null;
+    this.isMove = false;
   }
   tick = () => {
     this.setState(state => {
@@ -40,9 +52,18 @@ class Carousel extends Component {
       this.timeoutId = null;
     }
   };
+
   componentDidMount() {
-    this.clickHandlePlay();
+    moveOnDidMount(this);
   }
+  moveElement = e => {
+    if (this.isMove) {
+      const elementSlider = document.getElementById('slider');
+      elementSlider.style.top = `${e.clientY - this.currentY}px`;
+      elementSlider.style.left = `${e.clientX - this.currentX}px`;
+    }
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const { isPlaying, speedPlaying, maxSpeed } = this.state;
     this.clear();
@@ -51,9 +72,6 @@ class Carousel extends Component {
     }
   }
 
-  dblClickHandlerFullscreen = () => {
-    this.setState({ isFullScreen: !this.state.isFullScreen });
-  };
   clickHandlePrev = () =>
     this.setState({
       currentSlideNumber: (this.state.currentSlideNumber - 1 + this.slides.length) % this.slides.length,
@@ -80,28 +98,27 @@ class Carousel extends Component {
       : this.sliderStyles;
 
     return (
-      <div className={styles.carousel} style={currentStyles} onDoubleClick={this.dblClickHandlerFullscreen}>
+      <div
+        className={styles.carousel}
+        style={currentStyles}
+        onDoubleClick={() => clickHandlerFullscreen(this)}
+        onMouseMove={this.moveElement}
+      >
         <Slide slide={this.slides[this.state.currentSlideNumber]} bgSize={bgSize} />
         <div className={styles.buttonsBlock}>
-          <Icon
-            className={styles.button}
-            onClick={this.clickHandlePrev}
-            path={mdiSkipPrevious}
-            size={2}
-            rotate
-            color="white"
-          />
-          <div className={styles.playBlock}>
-            {this.state.isPlaying ? (
-              <Icon className={styles.button} onClick={this.clickHandlePlay} path={mdiPlay} size={2} color="white" />
-            ) : (
-              <Icon className={styles.button} onClick={this.clickHandleStop} path={mdiStop} size={2} color="white" />
-            )}
+          <Icon onClick={() => {}} path={mdiCogOutline} size={1} />
+          <div className={styles.movesBlock}>
+            <div className={styles.movesBlock__playControl}>
+              <Icon onClick={this.clickHandlePrev} path={mdiSkipPrevious} size={1} />
+              {this.state.isPlaying ? (
+                <Icon onClick={this.clickHandleStop} path={mdiStop} size={1} />
+              ) : (
+                <Icon onClick={this.clickHandlePlay} path={mdiPlay} size={1} />
+              )}
+              <Icon onClick={this.clickHandleNext} path={mdiSkipNext} size={1} />
+            </div>
             <input
-              className={styles.button}
               type="range"
-              id="speed"
-              name="speed"
               min="1"
               max={this.state.maxSpeed - 1}
               value={this.state.speedPlaying}
@@ -109,23 +126,10 @@ class Carousel extends Component {
             />
           </div>
           {this.state.isFullScreen ? (
-            <Icon
-              className={styles.button}
-              onClick={this.dblClickHandlerFullscreen}
-              path={mdiFullscreenExit}
-              size={2}
-              color="white"
-            />
+            <Icon onClick={() => clickHandlerFullscreen(this)} path={mdiFullscreenExit} size={1} />
           ) : (
-            <Icon
-              className={styles.button}
-              onClick={this.dblClickHandlerFullscreen}
-              path={mdiFullscreen}
-              size={2}
-              color="white"
-            />
+            <Icon onClick={() => clickHandlerFullscreen(this)} path={mdiFullscreen} size={1} />
           )}
-          <Icon className={styles.button} onClick={this.clickHandleNext} path={mdiSkipNext} size={2} color="white" />
         </div>
       </div>
     );
@@ -146,10 +150,11 @@ Carousel.propTypes = {
 
 Carousel.defaultProps = {
   sliderStyles: {
-    width: '800px',
-    height: '600px',
+    width: '600px',
+    height: '450px',
     backgroundColor: '#313131',
     isSlideContain: true,
+    currentPosition: { top: 10, left: 10 },
   },
 };
 

@@ -7,7 +7,7 @@ import styles from './Slider.module.scss';
 
 function Slider(props) {
   return (
-    <div className={styles.contentContainer}>
+    <div id="slider" className={styles.contentContainer} style={{ top: '0px', left: '0px' }}>
       <Carousel {...props} />
     </div>
   );

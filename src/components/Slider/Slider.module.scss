@@ -1,6 +1,9 @@
 @import '../Slider/common/commonStyles';
 
 .contentContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: max-content;
   margin: 0;
   background-color: $darkGrey;
