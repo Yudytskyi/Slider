@@ -12,7 +12,7 @@ import {
 } from '@mdi/js';
 
 import styles from './Carousel.module.scss';
-import { moveOnDidMount, clickHandlerFullscreen } from './move';
+import { moveOnDidMount, tick, clear, clickHandle } from './functions';
 import Slide from '../Slide';
 class Carousel extends Component {
   constructor(props) {
@@ -26,6 +26,7 @@ class Carousel extends Component {
     this.state = {
       isPlaying: false,
       speedPlaying: 5,
+      speedValue: 0,
       maxSpeed: 10,
       isFullScreen: false,
       currentSlideNumber: 0,
@@ -35,57 +36,27 @@ class Carousel extends Component {
     this.timeoutId = null;
     this.isMove = false;
   }
-  tick = () => {
-    this.setState(state => {
-      const { time } = state;
-      const newDate = new Date(time.getTime());
-      newDate.setSeconds(newDate.getSeconds() + 1);
-      this.clickHandleNext();
-      return {
-        time: newDate,
-      };
-    });
-  };
-  clear = () => {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
-    }
-  };
 
-  componentDidMount() {
-    moveOnDidMount(this);
-  }
   moveElement = e => {
-    if (this.isMove) {
+    if (this.isMove && !this.isFullScreen) {
       const elementSlider = document.getElementById('slider');
       elementSlider.style.top = `${e.clientY - this.currentY}px`;
       elementSlider.style.left = `${e.clientX - this.currentX}px`;
     }
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { isPlaying, speedPlaying, maxSpeed } = this.state;
-    this.clear();
-    if (isPlaying) {
-      this.timeoutId = setTimeout(this.tick, (maxSpeed - speedPlaying) * 1000);
-    }
+  componentDidMount() {
+    this.setState({ isPlaying: !this.state.isPlaying });
+    moveOnDidMount.call(this, [this.setState]);
   }
 
-  clickHandlePrev = () =>
-    this.setState({
-      currentSlideNumber: (this.state.currentSlideNumber - 1 + this.slides.length) % this.slides.length,
-    });
-
-  clickHandlePlay = () => this.setState({ isPlaying: !this.state.isPlaying });
-  clickHandleStop = () => this.setState({ isPlaying: false });
-  moveHandleRange = e => {
-    if (this.state.speedPlaying !== e.target.value) {
-      this.setState({ speedPlaying: e.target.value });
+  componentDidUpdate(prevProps, prevState) {
+    const { isPlaying, speedPlaying, maxSpeed } = this.state;
+    clear.call(this, [this.setState]);
+    if (isPlaying) {
+      this.timeoutId = setTimeout(tick.bind(this, [this.setState]), (maxSpeed - speedPlaying) * 1000);
     }
-  };
-  clickHandleNext = () =>
-    this.setState({ currentSlideNumber: (this.state.currentSlideNumber + 1) % this.slides.length });
+  }
 
   render() {
     const {
@@ -101,7 +72,7 @@ class Carousel extends Component {
       <div
         className={styles.carousel}
         style={currentStyles}
-        onDoubleClick={() => clickHandlerFullscreen(this)}
+        onDoubleClick={clickHandle.fullscreen.bind(this, [this.setState])}
         onMouseMove={this.moveElement}
       >
         <Slide slide={this.slides[this.state.currentSlideNumber]} bgSize={bgSize} />
@@ -109,26 +80,28 @@ class Carousel extends Component {
           <Icon onClick={() => {}} path={mdiCogOutline} size={1} />
           <div className={styles.movesBlock}>
             <div className={styles.movesBlock__playControl}>
-              <Icon onClick={this.clickHandlePrev} path={mdiSkipPrevious} size={1} />
+              <Icon onClick={clickHandle.prev.bind(this, [this.setState])} path={mdiSkipPrevious} size={1} />
               {this.state.isPlaying ? (
-                <Icon onClick={this.clickHandleStop} path={mdiStop} size={1} />
+                <Icon onClick={clickHandle.stop.bind(this, [this.setState])} path={mdiStop} size={1} />
               ) : (
-                <Icon onClick={this.clickHandlePlay} path={mdiPlay} size={1} />
+                <Icon onClick={clickHandle.play.bind(this, [this.setState])} path={mdiPlay} size={1} />
               )}
-              <Icon onClick={this.clickHandleNext} path={mdiSkipNext} size={1} />
+              <Icon onClick={clickHandle.next.bind(this, [this.setState])} path={mdiSkipNext} size={1} />
             </div>
             <input
               type="range"
               min="1"
               max={this.state.maxSpeed - 1}
               value={this.state.speedPlaying}
-              onChange={this.moveHandleRange}
+              onChange={e => {
+                clickHandle.range.call(this, [this.setState, e.target.value]);
+              }}
             />
           </div>
           {this.state.isFullScreen ? (
-            <Icon onClick={() => clickHandlerFullscreen(this)} path={mdiFullscreenExit} size={1} />
+            <Icon onClick={clickHandle.fullscreen.bind(this, [this.setState])} path={mdiFullscreenExit} size={1} />
           ) : (
-            <Icon onClick={() => clickHandlerFullscreen(this)} path={mdiFullscreen} size={1} />
+            <Icon onClick={clickHandle.fullscreen.bind(this, [this.setState])} path={mdiFullscreen} size={1} />
           )}
         </div>
       </div>
